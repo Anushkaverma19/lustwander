@@ -1,0 +1,152 @@
+<% layout('layout/boilerplate') %>
+<!-- <h1>All Listings</h1> -->
+<style>
+  #filters {
+    display: flex;
+    gap: 2px;
+
+    overflow-x: auto;      /* slider */
+    white-space: nowrap;
+
+    padding: 12px;
+    scroll-behavior: smooth;
+  }
+
+  /* hide scrollbar */
+  #filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter {
+    flex: 0 0 auto;   /* prevent wrapping */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    min-width: 90px;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  .filter i {
+    font-size: 18px;
+  }
+
+  .filter p {
+    margin: 0;
+    font-size: 12px;
+  }
+  .tax-info{
+    display: none;
+  }
+  .tax-toggle{
+    border:1px solid black;
+    border-radius: 1rem;
+    padding: 0.5rem;
+     display: flex;
+     height: 3rem;
+     margin-left: 3rem;
+  }
+  
+</style>
+
+<div id="filters">
+
+  <div class="filter">
+    <i class="fa-solid fa-house"></i>
+    <p>Home</p>
+  </div>
+
+  <div class="filter">
+    <i class="fa-solid fa-car"></i>
+    <p>Cars</p>
+  </div>
+
+  <div class="filter">
+    <i class="fa-solid fa-hotel"></i>
+    <p>Hotel</p>
+  </div>
+
+  <div class="filter">
+    <i class="fa-solid fa-plane"></i>
+    <p>Flights</p>
+  </div>
+
+  <div class="filter">
+    <i class="fa-solid fa-bell"></i>
+    <p>Alerts</p>
+  </div>
+
+  <div class="filter">
+    <i class="fa-solid fa-heart"></i>
+    <p>Likes</p>
+  </div>
+
+  <div class="filter">
+    <i class="fa-solid fa-music"></i>
+    <p>Music</p>
+  </div>
+
+  <div class="filter">
+    <i class="fa-solid fa-utensils"></i>
+    <p>Food</p>
+  </div>
+
+  <div class="filter">
+    <i class="fa-solid fa-bicycle"></i>
+    <p>Cycle</p>
+  </div>
+
+  <div class="filter">
+    <i class="fa-solid fa-umbrella-beach"></i>
+    <p>Beach</p>
+  </div>
+<div class="tax-toggle">
+  <div class="form-check-reverse  form-switch">
+  <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+  <label class="form-check-label" for="flexSwitchCheckDefault">Default switch checkbox input</label>
+</div>
+</div>
+</div>
+
+
+
+<div class="row row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 g-4 mt-2"> 
+  <% for(let listing of listings) { %>
+    <a class="listings_link" href="/listings/<%= listing._id %>">
+      <div class="card listingcard">
+
+        <!-- Main Image -->
+        <img 
+          class="card-img-top" 
+          src="<%= listing.mainImage ? listing.mainImage.url : '/images/default.jpg' %>" 
+          style="height:20rem; width:100%; object-fit:cover;"
+        >
+
+        <div class="card-body">
+          <p class="card-text">
+            <b><%= listing.title %></b><br>
+            ₹ <%= listing.price.toLocaleString("en-IN") %>
+            <i class="tax-info">+18%gst</i>
+          </p>
+        </div>
+
+      </div>
+    </a>
+  <% } %> 
+</div>
+<script>
+  let taxswitch=document.getElementById('flexSwitchCheckDefault');
+  taxswitch.addEventListener('change',()=>{   
+let taxinfo=document.querySelectorAll('.tax-info');
+taxinfo.forEach(el=>{
+  if(taxswitch.checked){
+    el.style.display='inline';
+  }else{
+    el.style.display='none';
+  }
+})
+  });  
+</script>

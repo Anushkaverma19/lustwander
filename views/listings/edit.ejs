@@ -1,0 +1,112 @@
+<% layout('layout/boilerplate') %>
+<div class="row">
+  <div class="col-8 offset-2">
+<h1><%= listings.title %></h1>
+<form class="needs-validation" method="POST" action="/listings/<%= listings._id %>?_method=PUT"  novalidate enctype="multipart/form-data">
+   <div class="form-group mb-3">
+    <label>Title</label>
+    <input 
+      type="text" 
+      name="listing[title]" 
+      value="<%= listings.title %>" 
+      class="form-control"
+      required
+      enctype="multipart/form-data"
+    >
+  </div>
+
+  <div class="form-group mb-3">
+    <label>Description</label>
+    <textarea 
+      name="listing[description]" 
+      class="form-control"
+      required
+    ><%= listings.description %></textarea>
+     <div class="invalid-feedback">
+      Please provide a short description.
+    </div>
+  </div>
+  <!-- //preview previous image -->
+  
+ <!-- 🔥 MAIN IMAGE -->
+<div class="mb-4">
+  <label class="form-label">Main Image</label><br>
+
+  <% if (listings.mainImage) { %>
+    <img 
+      src="<%= listings.mainImage.url %>" 
+      style="height:200px; width:300px; object-fit:cover; border-radius:10px; margin-bottom:10px;"
+    >
+  <% } else { %>
+    <p>No main image</p>
+  <% } %>
+
+  <!-- Upload new main image -->
+  <input 
+    type="file" 
+    name="mainImage" 
+    class="form-control"
+  >
+</div>
+
+
+<!-- 🔥 OTHER IMAGES (Gallery) -->
+<div class="mb-4">
+  <label class="form-label">Other Images</label><br>
+
+  <% if (listings.otherImages && listings.otherImages.length > 0) { %>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+      
+      <% listings.otherImages.forEach(img => { %>
+        <img 
+          src="<%= img.url %>" 
+          style="height:100px; width:100px; object-fit:cover; border-radius:8px;"
+        >
+      <% }) %>
+
+    </div>
+  <% } else { %>
+    <p>No additional images</p>
+  <% } %>
+
+  <!-- Upload new multiple images -->
+  <input 
+    type="file" 
+    name="otherImages" 
+    multiple
+    class="form-control"
+  >
+</div>
+<div class="row">
+  <div class="col-md-6 mb-3">
+    <label>Price</label>
+    <input 
+      type="number" 
+      name="listing[price]" 
+      value="<%= listings.price %>" 
+      class="form-control"
+      required
+    >
+    <div class="invalid-feedback">
+      Please provide a valid price.
+    </div>
+  </div>
+
+  <div class="col-md-6 mb-3">
+    <label>Country</label>
+    <input 
+      type="text" 
+      name="listing[country]" 
+      value="<%= listings.country %>" 
+      class="form-control"
+      required
+    >
+      <div class="invalid-feedback">
+      Please provide a valid city.
+    </div>
+  </div>
+</div>
+  <button class="btn btn-dark">Update Listing</button>
+</form>
+</div>
+</div>

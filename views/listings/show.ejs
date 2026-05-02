@@ -1,0 +1,126 @@
+<% layout('layout/boilerplate') %>
+
+<div class="col-8 offset-4 mt-4">
+  <h1><%= listings.title %></h1>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-md-4">
+
+    <div class="card show_card listingcard">
+
+      <!-- Main Image -->
+      <img class="card-img-top show_image" 
+           src="<%= listings.mainImage ? listings.mainImage.url : '/images/default.jpg' %>" 
+           alt="Image of <%= listings.title %>">
+
+      <div class="card-body">
+        owned by <i><%= listings.owner.username %></i>
+
+        <p class="card-text"><%= listings.description %></p>      
+        <p class="card-text"><%= listings.title %></p>
+        <p class="card-text">₹ <%= listings.price.toLocaleString('en-IN') %></p>
+      </div>
+
+      <!-- Other Images -->
+      <% if (listings.otherImages && listings.otherImages.length > 0) { %>
+        <div class="row mt-3">
+          <% listings.otherImages.forEach(img => { %>
+            <div class="col-4 mb-2">
+              <img 
+                src="<%= img.url %>" 
+                style="width:100%; height:100px; object-fit:cover; border-radius:8px;"
+              >
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+
+    </div>
+
+    <!-- Owner actions -->
+    <% if(currentuser && currentuser._id.equals(listings.owner._id)) { %>
+      <div class="mt-2 d-flex gap-2">
+        <a href="/listings/<%= listings._id %>/edit" class="btn btn-dark">Edit</a>
+        <form action="/listings/<%= listings._id %>?_method=DELETE" method="POST">
+          <button class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    <% } %>
+
+    <hr>
+
+    <!-- Review Form -->
+    <div class="review-section mb-3 mt-3">
+      <h2>Leave a Review</h2>
+
+      <form action="/listings/<%= listings._id %>/review" method="POST" novalidate class="needs-validation">
+
+        <div class="mb-3">
+          <label class="form-label">Your Comment:</label>
+          <textarea class="form-control" name="review[comment]" rows="6" required></textarea>
+
+          <fieldset class="starability-heartbeat">
+            <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0" checked />
+            <input type="radio" id="first-rate1" name="review[rating]" value="1" /><label for="first-rate1">1 star</label>
+            <input type="radio" id="first-rate2" name="review[rating]" value="2" /><label for="first-rate2">2 stars</label>
+            <input type="radio" id="first-rate3" name="review[rating]" value="3" /><label for="first-rate3">3 stars</label>
+            <input type="radio" id="first-rate4" name="review[rating]" value="4" /><label for="first-rate4">4 stars</label>
+            <input type="radio" id="first-rate5" name="review[rating]" value="5" /><label for="first-rate5">5 stars</label>
+          </fieldset>
+
+          <div class="invalid-feedback">Please enter comment</div>
+        </div>
+
+        <button class="btn btn-outline-dark">Submit Review</button>
+      </form>
+    </div>
+
+    <hr>
+
+    <!-- Reviews -->
+    <% if (listings.review && listings.review.length > 0) { %>
+
+      <h3>All Reviews</h3>
+
+      <div class="row">
+        <% listings.review.forEach((rev) => { %>
+          <div class="col-md-6 mb-3">
+            <div class="card h-100">
+              <div class="card-body">
+
+                <h5 class="card-title">By <%= rev.author.username %></h5>
+                <p><strong>Comment:</strong> <%= rev.comment %></p>
+
+                <p class="starability-result" data-rating="<%= rev.rating %>"></p>
+
+                <form action="/listings/<%= listings._id %>/review/<%= rev._id %>?_method=DELETE" method="POST">
+                  <button class="btn btn-danger btn-sm ms-2 mb-2">Delete</button>
+                </form>
+
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+
+    <% } else { %>
+      <p>No reviews yet</p>
+    <% } %>
+    
+  <div class="col-8">
+    <h3>Where I Am</h3>
+    <div id="map"></div>
+  </div>
+
+
+<!-- coords inject -->
+<script>
+  const coords = <%- JSON.stringify(listings.geometry?.coordinates || []) %>;
+  console.log("📍 COORDS FROM DB:", coords);
+
+  const mapCoords = coords.length === 2 ? coords : [78.9629, 20.5937];
+</script>
+
+<!-- map.js -->
+<script src="/js/map.js"></script>
