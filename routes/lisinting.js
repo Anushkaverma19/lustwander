@@ -1,26 +1,18 @@
 const express = require('express');
-const router = express.Router(); 
+const router = express.Router();
 
 const wrapasync = require("../utils/wrapasyn.js");
 const { loggedin, isowner, validatelisting } = require('../middleware.js');
 const listingcontroller = require("../controller/listing.js");
 
-const multer  = require('multer');
+const multer = require('multer');
 const { storage } = require('../cloudConfig.js');
 const upload = multer({ storage });
 
-// ---------------- NEW ----------------
-// Render the form for creating a new listing
+/* ---------------- NEW LISTING FORM ---------------- */
 router.get('/new', loggedin, listingcontroller.new);
 
-// ---------------- SHOW & DELETE ----------------
-// Show a single listing OR delete it
-router.route('/:id')
-  .get(wrapasync(listingcontroller.show))
-  .delete(loggedin, isowner, wrapasync(listingcontroller.destroy));
-
-// ---------------- INDEX & CREATE ----------------
-// Show all listings OR create a new one
+/* ---------------- INDEX & CREATE ---------------- */
 router.route("/")
   .get(wrapasync(listingcontroller.index))
   .post(
@@ -33,11 +25,10 @@ router.route("/")
     wrapasync(listingcontroller.create)
   );
 
-// ---------------- EDIT & UPDATE ----------------
-// Render edit form OR update listing
+/* ---------------- SHOW / UPDATE / DELETE ---------------- */
 router.route('/:id')
   .get(wrapasync(listingcontroller.show))
-  .put( // Add PUT handler here
+  .put(
     loggedin,
     isowner,
     upload.fields([
@@ -49,7 +40,7 @@ router.route('/:id')
   )
   .delete(loggedin, isowner, wrapasync(listingcontroller.destroy));
 
-// Edit form should be separate GET route
+/* ---------------- EDIT FORM ---------------- */
 router.get('/:id/edit', loggedin, isowner, wrapasync(listingcontroller.edit));
 
 module.exports = router;
