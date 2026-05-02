@@ -67,14 +67,12 @@ passport.serializeUser(user.serializeUser());
 passport.deserializeUser(user.deserializeUser());
 //router se phele flash use karo taki har route ke liye flash available ho
 app.use((req, res, next) => {
-    res.locals.success = req.flash("success");
-    res.locals.failure = req.flash("failure");
-    res.locals.error = req.flash("error");
-    res.locals.currentuser = req.user||null;
-   
+    res.locals.success = req.flash("success") || null;
+    res.locals.failure = req.flash("failure") || null;
+    res.locals.error = req.flash("error") || null;
+    res.locals.currentuser = req.user || null;
     next();
-}); 
-
+});
 
 app.use("/listings", router);
 app.use("/listings/:id/review",reviewrouter);
