@@ -1,46 +1,30 @@
-// ================= ENV =================
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-// ================= CORE =================
 const express = require("express");
 const app = express();
-const path = require("path");
-const mongoose = require("mongoose");
-
-// ================= SECURITY =================
-const helmet = require("helmet");
 const cors = require("cors");
-
-// ================= SESSION =================
+const methodOverride = require("method-override");
+const path = require("path");
+const ejsMate = require("ejs-mate");
 const session = require("express-session");
-const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 
-// ================= AUTH =================
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 
-// ================= OTHERS =================
-const methodOverride = require("method-override");
-const ejsMate = require("ejs-mate");
+const mongoose = require("mongoose");
 
-// ================= MODELS =================
-const User = require("./models/init/user.js");
-
-// ================= UTILS =================
 const ExpressError = require("./utils/ExpressError.js");
 
-// ================= ROUTES =================
-const listingRouter = require("./routes/lisinting");
-const reviewRouter = require("./routes/review");
-const userRouter = require("./routes/user");
+const User = require("./models/init/user.js");
 
-// ================= DB =================
-const dbUrl = process.env.ATLAS_URL;
+const router = require("./routes/lisinting");
+const reviewrouter = require("./routes/review");
+const userrouter = require("./routes/user");
 
-// ================= APP CONFIG =================
+// ================= CONFIG =================
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.engine("ejs", ejsMate);
@@ -49,38 +33,31 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(methodOverride("_method"));
+app.use(cors());
 
-// ================= SECURITY MIDDLEWARE =================
-app.use(helmet());
+// ================= DB =================
+const dbUrl = process.env.ATLAS_URL;
 
+// IMPORTANT: don't connect twice
+async function main() {
+  await mongoose.connect(dbUrl);
+  console.log("Connected to MongoDB");
+}
+
+// ================= SESSION =================
 app.use(
-  cors({
-    origin: true,
-    credentials: true,
+  session({
+    secret: process.env.SESSION_SECRET || "secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // FIXED
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
   })
 );
 
-// ================= SESSION CONFIG =================
-const sessionOptions = {
-  secret: process.env.SESSION_SECRET || "fallbacksecret",
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({
-    mongoUrl: dbUrl,
-    crypto: {
-      secret: process.env.SESSION_SECRET,
-    },
-    touchAfter: 24 * 3600,
-  }),
-  cookie: {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production", // ONLY HTTPS IN PROD
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    maxAge: 1000 * 60 * 60 * 24 * 7,
-  },
-};
-
-app.use(session(sessionOptions));
 app.use(flash());
 
 // ================= PASSPORT =================
@@ -96,14 +73,14 @@ app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.failure = req.flash("failure");
   res.locals.error = req.flash("error");
-  res.locals.currentUser = req.user || null;
+  res.locals.currentuser = req.user || null;
   next();
 });
 
 // ================= ROUTES =================
-app.use("/listings", listingRouter);
-app.use("/listings/:id/review", reviewRouter);
-app.use("/", userRouter);
+app.use("/listings", router);
+app.use("/listings/:id/review", reviewrouter);
+app.use("/", userrouter);
 
 // ================= 404 =================
 app.use((req, res, next) => {
@@ -116,16 +93,17 @@ app.use((err, req, res, next) => {
   res.status(statusCode).render("error", { message });
 });
 
-// ================= DB + SERVER =================
-mongoose
-  .connect(dbUrl)
+// ================= START SERVER =================
+main()
   .then(() => {
     console.log("MongoDB connected");
 
-    app.listen(process.env.PORT || 3000, () => {
-      console.log(`Server running on port ${process.env.PORT || 3000}`);
+    const PORT = process.env.PORT || 3000;
+
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
     });
   })
   .catch((err) => {
-    console.log("DB Connection Error:", err);
+    console.log("DB Error:", err);
   });
