@@ -39,7 +39,7 @@ const dbUrl = process.env.atlas_url;
 
 // 🔥 SAFE SESSION CONFIG
 const sessionoptions = {
-    secret: process.env.secret || "temp_secret_key",
+    secret: process.env.SECRET || "temp_secret_key",
     resave: false,
     saveUninitialized: false,
     cookie: {
