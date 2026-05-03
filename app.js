@@ -88,6 +88,7 @@ app.use((req, res, next) => {
 
 // ---------------- ERROR HANDLER ----------------
 app.use((err, req, res, next) => {
+    console.log("🔥 FULL ERROR:", err); // add this
     let { statusCode = 500, message = "something wrong" } = err;
     res.status(statusCode).render("error", { message });
 });
