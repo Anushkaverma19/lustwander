@@ -26,7 +26,7 @@ const passport = require("passport");
 const localstrategy = require("passport-local");
 const user = require("./models/init/user.js");
 
-const ExpressError = require("./utils/expresserror.js");
+const ExpressError = require("./utils/ExpressError.js");
 
 const mongoose = require('mongoose');
 
