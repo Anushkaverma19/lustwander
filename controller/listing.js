@@ -16,9 +16,8 @@ module.exports.create = async (req, res) => {
   try {
     req.body.listing.country = req.body.listing.country || "India";
 
-    const mainImageFile = req.files['mainImage'] ? req.files['mainImage'][0] : null;
-    const otherImageFiles = req.files['otherImages'] || [];
-
+const mainImageFile = req.files?.mainImage?.[0] || null;
+const otherImageFiles = req.files?.otherImages || [];
     const newListing = new listing(req.body.listing);
 
     // 🌍 FIXED LOCATION STRING
