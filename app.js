@@ -12,7 +12,7 @@ const ejsMate = require("ejs-mate");
 const session = require("express-session");
 const flash = require("connect-flash");
 const sessionoptions = {
-    secret:process.env.secert,    
+    secret:process.env.secret,    
     resave: false,
     saveUninitialized:false,
     cookie: {
