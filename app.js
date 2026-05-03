@@ -35,7 +35,7 @@ app.use(methodOverride("_method"));
 app.use(cors());
 
 // ---------------- ENV ----------------
-const dbUrl = process.env.atlas_url;
+const dbUrl = process.env.ATLAS_URL;
 
 // 🔥 SAFE SESSION CONFIG
 const sessionoptions = {
