@@ -12,14 +12,15 @@ const ejsMate = require("ejs-mate");
 const session = require("express-session");
 const flash = require("connect-flash");
 const sessionoptions = {
-    secret:process.env.secret,    
-    resave: false,
-    saveUninitialized:false,
-    cookie: {
-expires: Date.now() + 1000 * 60 * 60 * 24 * 7, // 1 week
-maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
-httpOnly: true
-    }
+  secret: process.env.SECRET,   // 🔐 MUST (no fallback in production)
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true,
+    secure: true,   // ✅ HTTPS pe hi cookie send hogi
+    sameSite: "lax",
+    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+  }
 };
 
 const passport = require("passport");
