@@ -12,14 +12,13 @@ const ejsMate = require("ejs-mate");
 const session = require("express-session");
 const flash = require("connect-flash");
 const sessionoptions = {
-  secret: process.env.SECRET,   // 🔐 MUST (no fallback in production)
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    secure: true,   // ✅ HTTPS pe hi cookie send hogi
-    sameSite: "lax",
-    maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+    secure: false,   // 🔥 CHANGE THIS
+    maxAge: 1000 * 60 * 60 * 24 * 7
   }
 };
 
