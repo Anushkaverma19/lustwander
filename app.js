@@ -12,16 +12,15 @@ const ejsMate = require("ejs-mate");
 const session = require("express-session");
 const flash = require("connect-flash");
 const sessionoptions = {
-    secret:process.env.secret,    
+    secret: process.env.secret,
     resave: false,
-    saveUninitialized:false,
+    saveUninitialized: false,
     cookie: {
-expires: Date.now() + 1000 * 60 * 60 * 24 * 7, // 1 week
-maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
-httpOnly: true
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        httpOnly: true
     }
 };
-
 const passport = require("passport");
 const localstrategy = require("passport-local");
 const user = require("./models/init/user.js");
